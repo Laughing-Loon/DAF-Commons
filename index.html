@@ -10,8 +10,8 @@
     <style>
         /*
         ==================================
-        DAF COMMONS WEBSITE v3.0
-        Updates: Rock image scroll animations, improved statistics formatting
+        DAF COMMONS WEBSITE v3.4
+        Added Network logo, optimized text sizing
         ==================================
         */
 
@@ -138,6 +138,20 @@
             letter-spacing: -0.02em;
             text-transform: uppercase;
             cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        nav .logo-icon {
+            width: 32px;
+            height: 32px;
+            flex-shrink: 0;
+        }
+
+        nav .logo-icon svg {
+            width: 100%;
+            height: 100%;
         }
 
         nav ul {
@@ -218,17 +232,18 @@
         /* ===== STATS GRID ===== */
         .stats-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(min(250px, 100%), 1fr));
-            gap: clamp(20px, 3vw, 28px);
+            grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr));
+            gap: clamp(16px, 2.5vw, 24px);
             margin-top: clamp(48px, 8vw, 96px);
         }
 
         .stat-card {
-            padding: clamp(28px, 4.5vw, 56px);
+            padding: clamp(24px, 4vw, 48px);
             background: white;
             border-radius: 20px;
             transition: transform 0.3s ease;
             min-width: 0;
+            overflow: hidden;
         }
 
         .stat-card:hover {
@@ -236,13 +251,14 @@
         }
 
         .stat-value {
-            font-size: clamp(40px, 7vw, 96px);
+            font-size: clamp(32px, 5.5vw, 72px);
             font-weight: 900;
             line-height: 1;
             letter-spacing: -0.03em;
             word-wrap: break-word;
             overflow-wrap: break-word;
             hyphens: none;
+            max-width: 100%;
         }
 
         .stat-label {
@@ -284,17 +300,19 @@
         /* ===== FEATURES GRID ===== */
         .features-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(min(320px, 100%), 1fr));
-            gap: clamp(24px, 4vw, 32px);
+            grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr));
+            gap: clamp(20px, 3.5vw, 28px);
             margin-top: clamp(48px, 8vw, 96px);
         }
 
         .feature-card {
-            padding: clamp(40px, 6vw, 80px);
+            padding: clamp(32px, 5vw, 64px);
             background: white;
             border-radius: 20px;
             cursor: pointer;
             transition: transform 0.3s ease;
+            overflow: hidden;
+            min-width: 0;
         }
 
         .feature-card:hover {
@@ -309,13 +327,15 @@
         }
 
         .feature-title {
-            font-size: clamp(24px, 4vw, 48px);
+            font-size: clamp(20px, 3.2vw, 40px);
             font-weight: 900;
-            line-height: 1;
+            line-height: 1.1;
             letter-spacing: -0.02em;
             text-transform: uppercase;
             margin-bottom: clamp(16px, 3vw, 24px);
             word-wrap: break-word;
+            overflow-wrap: break-word;
+            max-width: 100%;
         }
 
         .feature-description {
@@ -606,6 +626,25 @@
             }
         }
 
+        @media (max-width: 480px) {
+            .stat-value {
+                font-size: clamp(28px, 8vw, 56px);
+            }
+
+            .stat-card {
+                padding: clamp(20px, 5vw, 32px);
+            }
+
+            .feature-title {
+                font-size: clamp(18px, 5vw, 32px);
+                line-height: 1.15;
+            }
+
+            .feature-card {
+                padding: clamp(28px, 6vw, 48px);
+            }
+        }
+
         /* ===== ROCK IMAGES ===== */
         .rock-image {
             width: 100%;
@@ -723,7 +762,29 @@
     <!-- NAVIGATION -->
     <nav>
         <div class="container">
-            <div class="logo" onclick="navigateTo('home')">DAF COMMONS<span class="asterisk">*</span></div>
+            <div class="logo" onclick="navigateTo('home')">
+                <div class="logo-icon">
+                    <svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
+                        <!-- Center node -->
+                        <circle cx="60" cy="60" r="8" fill="#6B7F5B"/>
+                        <!-- Outer nodes -->
+                        <circle cx="60" cy="20" r="6" fill="#0A0A0A"/>
+                        <circle cx="95" cy="40" r="6" fill="#0A0A0A"/>
+                        <circle cx="95" cy="80" r="6" fill="#0A0A0A"/>
+                        <circle cx="60" cy="100" r="6" fill="#0A0A0A"/>
+                        <circle cx="25" cy="80" r="6" fill="#0A0A0A"/>
+                        <circle cx="25" cy="40" r="6" fill="#0A0A0A"/>
+                        <!-- Connections -->
+                        <line x1="60" y1="60" x2="60" y2="20" stroke="#0A0A0A" stroke-width="2"/>
+                        <line x1="60" y1="60" x2="95" y2="40" stroke="#0A0A0A" stroke-width="2"/>
+                        <line x1="60" y1="60" x2="95" y2="80" stroke="#0A0A0A" stroke-width="2"/>
+                        <line x1="60" y1="60" x2="60" y2="100" stroke="#0A0A0A" stroke-width="2"/>
+                        <line x1="60" y1="60" x2="25" y2="80" stroke="#0A0A0A" stroke-width="2"/>
+                        <line x1="60" y1="60" x2="25" y2="40" stroke="#0A0A0A" stroke-width="2"/>
+                    </svg>
+                </div>
+                <span>DAF COMMONS</span>
+            </div>
             <ul>
                 <li><a href="#" onclick="navigateTo('home')" class="nav-link" data-page="home">Home</a></li>
                 <li><a href="#" onclick="navigateTo('community')" class="nav-link" data-page="community">Community</a></li>
@@ -1069,18 +1130,6 @@
         </div>
 
         <!-- ===== ABOUT PAGE ===== -->
-        <!--
-        STONE TEXTURE IMAGES SETUP:
-
-        The website is now configured to use your 3 stone texture images!
-        To complete setup, save your images with these exact names in the same folder as this HTML:
-
-        - Stone Texture 2.jpg  →  Rename to: stone-texture-1.jpg
-        - Stone texture 3.jpg  →  Rename to: stone-texture-2.jpg
-        - Stone texture 4.jpg  →  Rename to: stone-texture-3.jpg
-
-        The images will automatically shrink/scale as users scroll (largest when centered).
-        -->
         <div id="about" class="page">
             <!-- Hero -->
             <section class="hero">
@@ -1102,24 +1151,14 @@
                         </p>
                     </div>
 
-                    <!-- Rock Image 1 -->
-                    <div class="rock-section scroll-animate">
-                        <img src="stone-texture-1.jpg" alt="Stone Formation" class="rock-image" id="rockImage1">
-                    </div>
-
                     <!-- What We Do -->
-                    <div class="rock-overlay">
+                    <div class="rock-overlay" style="padding-top: 0;">
                         <div class="about-text-block scroll-animate">
                             <div class="about-label">What We Do</div>
                             <p class="about-body">
                                 The DAF Commons project was born out of this frustration, and desire to build a collective space for DAF holders seeking to make material impact with their capital. DAF Commons serves as the connective tissue between DAF holders and DAF possibilities.
                             </p>
                         </div>
-                    </div>
-
-                    <!-- Rock Image 2 -->
-                    <div class="rock-section scroll-animate">
-                        <img src="stone-texture-2.jpg" alt="Stone Formation" class="rock-image" id="rockImage2">
                     </div>
 
                     <!-- Collaborators -->
@@ -1134,11 +1173,6 @@
                             <div class="collaborator-name">Sea Forward Fund</div>
                             <div class="collaborator-name">Collective Climate Justice Fund</div>
                         </div>
-                    </div>
-
-                    <!-- Rock Image 3 -->
-                    <div class="rock-section scroll-animate">
-                        <img src="stone-texture-3.jpg" alt="Stone Formation" class="rock-image" id="rockImage3">
                     </div>
 
                     <!-- Contact -->
@@ -1323,35 +1357,14 @@
 
             animateElements.forEach(el => observer.observe(el));
 
-            // Texture scroll effect + Rock image shrinking
+            // Texture scroll effect
             window.addEventListener('scroll', () => {
                 const scrolled = window.pageYOffset;
-
-                // Background textures
                 const textures = document.querySelectorAll('.bg-texture');
                 textures.forEach((texture, index) => {
                     const speed = 0.3 + (index * 0.1);
                     const scale = 1 + (scrolled * 0.0001);
                     texture.style.transform = `translateY(${scrolled * speed}px) scale(${scale})`;
-                });
-
-                // Rock images - shrink as you scroll
-                const rockImages = document.querySelectorAll('.rock-image');
-                rockImages.forEach((img) => {
-                    const rect = img.getBoundingClientRect();
-                    const imgCenter = rect.top + (rect.height / 2);
-                    const viewportCenter = window.innerHeight / 2;
-
-                    // Calculate distance from viewport center
-                    const distance = Math.abs(imgCenter - viewportCenter);
-                    const maxDistance = window.innerHeight;
-
-                    // Scale between 0.75 and 1 based on distance from center
-                    // Image is largest (1) when centered, shrinks (0.75) when far away
-                    const normalizedDistance = Math.min(distance / maxDistance, 1);
-                    const scale = 1 - (normalizedDistance * 0.25);
-
-                    img.style.transform = `scale(${scale})`;
                 });
             });
         }
