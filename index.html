@@ -3,10 +3,14 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DAF Commons — Collective Infrastructure for Impact</title>
+    <title data-content="page_title">DAF Commons — Collective Infrastructure for Impact</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700;800;900&display=swap" rel="stylesheet">
+
+    <!-- Supabase Client -->
+    <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@2"></script>
+
     <style>
         /*
         ==================================
@@ -25,12 +29,13 @@
             --bg: #F5F3F0;
             --text: #0A0A0A;
             --text-secondary: #3A3A3A;
-            --accent: #6B7F5B;
+            --accent: #C2632A;
             --border: rgba(10, 10, 10, 0.08);
         }
 
         html {
             scroll-behavior: smooth;
+            overflow-x: hidden;
         }
 
         body {
@@ -119,7 +124,7 @@
             backdrop-filter: blur(8px);
             border-bottom: 1px solid var(--border);
             z-index: 1000;
-            padding: clamp(16px, 3vw, 32px) clamp(24px, 5vw, 80px);
+            padding: clamp(16px, 3vw, 32px) 0;
         }
 
         nav .container {
@@ -178,6 +183,36 @@
             color: var(--text);
         }
 
+        .nav-toggle {
+            display: none;
+            background: none;
+            border: none;
+            cursor: pointer;
+            padding: 8px;
+            flex-direction: column;
+            gap: 5px;
+        }
+
+        .nav-toggle span {
+            display: block;
+            width: 24px;
+            height: 2px;
+            background: var(--text);
+            transition: transform 0.3s ease, opacity 0.3s ease;
+        }
+
+        .nav-toggle.open span:nth-child(1) {
+            transform: rotate(45deg) translate(5px, 5px);
+        }
+
+        .nav-toggle.open span:nth-child(2) {
+            opacity: 0;
+        }
+
+        .nav-toggle.open span:nth-child(3) {
+            transform: rotate(-45deg) translate(5px, -5px);
+        }
+
         /* ===== LAYOUT ===== */
         main {
             margin-top: clamp(64px, 10vw, 120px);
@@ -201,6 +236,7 @@
             max-width: 1600px;
             margin: 0 auto;
             padding: 0 clamp(24px, 5vw, 80px);
+            width: 100%;
         }
 
         .section {
@@ -443,6 +479,179 @@
             opacity: 0.5;
         }
 
+        /* ===== CTA SECTION ===== */
+        .cta-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: clamp(24px, 4vw, 32px);
+            margin-top: clamp(48px, 8vw, 96px);
+        }
+
+        .cta-card {
+            padding: clamp(32px, 5vw, 48px);
+            background: white;
+            border-radius: 20px;
+            display: flex;
+            flex-direction: column;
+            transition: transform 0.3s ease;
+        }
+
+        .cta-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .cta-card h3 {
+            margin-bottom: clamp(16px, 3vw, 24px);
+        }
+
+        .cta-card.full-width {
+            grid-column: 1 / -1;
+        }
+
+        .cta-learn {
+            flex-direction: row;
+            align-items: center;
+            gap: clamp(32px, 5vw, 64px);
+        }
+
+        .cta-learn-text {
+            flex: 1;
+        }
+
+        .cta-learn-btn {
+            width: auto;
+            min-width: 200px;
+            flex-shrink: 0;
+        }
+
+        /* Form Styles */
+        input[type="text"],
+        input[type="email"] {
+            width: 100%;
+            padding: clamp(12px, 2vw, 16px) clamp(16px, 2.5vw, 20px);
+            font-family: inherit;
+            font-size: clamp(14px, 1.6vw, 16px);
+            border: 1px solid var(--border);
+            background: var(--bg);
+            border-radius: 12px;
+            outline: none;
+            transition: border 0.2s ease;
+        }
+
+        input[type="text"]:focus,
+        input[type="email"]:focus {
+            border-color: var(--accent);
+        }
+
+        button.btn-primary,
+        button.btn-secondary,
+        button.btn-outline,
+        .button {
+            width: 100%;
+            padding: clamp(14px, 2.5vw, 18px) clamp(24px, 4vw, 32px);
+            font-family: inherit;
+            font-size: clamp(14px, 1.6vw, 16px);
+            font-weight: 700;
+            text-transform: uppercase;
+            letter-spacing: 0.05em;
+            border: none;
+            border-radius: 100px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            text-decoration: none;
+            display: inline-block;
+            text-align: center;
+        }
+
+        .btn-primary {
+            background: var(--accent);
+            color: white;
+        }
+
+        .btn-primary:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+
+        .btn-secondary {
+            background: var(--text);
+            color: var(--bg);
+        }
+
+        .btn-secondary:hover {
+            opacity: 0.9;
+            transform: translateY(-2px);
+        }
+
+        .btn-outline {
+            background: transparent;
+            color: var(--accent);
+            border: 2px solid var(--accent);
+        }
+
+        .btn-outline:hover {
+            background: var(--accent);
+            color: white;
+        }
+
+        .form-container {
+            display: flex;
+            flex-direction: column;
+            gap: clamp(12px, 2vw, 16px);
+        }
+
+        .form-description {
+            margin-bottom: clamp(24px, 4vw, 32px);
+            opacity: 0.8;
+            flex-grow: 1;
+        }
+
+        .form-intro {
+            margin-bottom: clamp(12px, 2vw, 16px);
+            font-weight: 600;
+        }
+
+        ul.clean-list {
+            list-style: none;
+            padding: 0;
+            margin-bottom: clamp(24px, 4vw, 32px);
+        }
+
+        ul.clean-list li {
+            font-size: clamp(14px, 1.6vw, 16px);
+            line-height: 1.6;
+            margin-bottom: 8px;
+            padding-left: 20px;
+            position: relative;
+        }
+
+        ul.clean-list li::before {
+            content: "•";
+            position: absolute;
+            left: 0;
+        }
+
+        .message {
+            display: none;
+            padding: 12px;
+            border-radius: 8px;
+            font-size: clamp(13px, 1.5vw, 14px);
+            text-align: left;
+            margin-top: 12px;
+        }
+
+        .message.success {
+            background: #d4edda;
+            color: #155724;
+            border: 1px solid #c3e6cb;
+        }
+
+        .message.error {
+            background: #f8d7da;
+            color: #721c24;
+            border: 1px solid #f5c6cb;
+        }
+
         /* ===== DIRECTORY CARDS ===== */
         .directory-grid {
             display: grid;
@@ -582,7 +791,7 @@
             right: -10%;
             width: 40vw;
             height: 40vw;
-            background: radial-gradient(circle, rgba(107, 127, 91, 0.1) 0%, transparent 70%);
+            background: radial-gradient(circle, rgba(194, 99, 42, 0.1) 0%, transparent 70%);
         }
 
         .bg-texture-2 {
@@ -596,7 +805,7 @@
         /* ===== NO RESULTS ===== */
         .no-results {
             padding: clamp(64px, 10vw, 120px);
-            text-align: center;
+            text-align: left;
             opacity: 0.5;
         }
 
@@ -612,27 +821,152 @@
             font-size: clamp(16px, 2vw, 20px);
         }
 
-        /* ===== RESPONSIVE ===== */
+        /* ===== RESPONSIVE: TABLET (≤768px) ===== */
         @media (max-width: 768px) {
+            /* Nav: hamburger menu */
+            .nav-toggle {
+                display: flex;
+            }
+
             nav .container {
-                flex-direction: column;
-                align-items: flex-start;
+                flex-wrap: wrap;
             }
 
             nav ul {
+                display: none;
                 width: 100%;
-                flex-direction: row;
-                gap: 16px;
+                flex-direction: column;
+                gap: 0;
+                padding-top: 16px;
+            }
+
+            nav ul.open {
+                display: flex;
+            }
+
+            nav ul li {
+                width: 100%;
+            }
+
+            nav ul a {
+                display: block;
+                padding: 12px 0;
+                font-size: 16px;
+                border-bottom: 1px solid var(--border);
+            }
+
+            /* Hero */
+            .hero {
+                min-height: auto;
+                padding: clamp(60px, 12vw, 100px) 0;
+            }
+
+            .massive {
+                font-size: clamp(40px, 11vw, 180px);
+            }
+
+            .huge {
+                font-size: clamp(36px, 8vw, 140px);
+            }
+
+            /* Sections */
+            .section {
+                padding: clamp(48px, 8vw, 100px) 0;
+            }
+
+            .section-small {
+                padding: clamp(32px, 6vw, 80px) 0;
+            }
+
+            /* CTA */
+            .cta-grid {
+                grid-template-columns: 1fr;
+            }
+
+            .cta-card.full-width {
+                grid-column: 1;
+            }
+
+            .cta-learn {
+                flex-direction: column;
+                align-items: flex-start;
+                gap: clamp(24px, 4vw, 32px);
+            }
+
+            .cta-learn-btn {
+                width: 100%;
+                min-width: unset;
+            }
+
+            /* Grids */
+            .stats-grid {
+                grid-template-columns: repeat(2, 1fr);
+            }
+
+            /* About */
+            .about-text-block {
+                max-width: 100%;
+            }
+
+            .contact-box {
+                max-width: 100%;
+            }
+
+            /* Filters */
+            .filters {
+                gap: clamp(8px, 1.5vw, 12px);
+            }
+
+            .filter-btn {
+                padding: 10px 16px;
+                font-size: 12px;
             }
         }
 
+        /* ===== RESPONSIVE: PHONE (≤480px) ===== */
         @media (max-width: 480px) {
+            .container {
+                padding: 0 clamp(16px, 4vw, 24px);
+            }
+
+            .massive {
+                font-size: clamp(36px, 10vw, 60px);
+            }
+
+            .huge {
+                font-size: clamp(32px, 8vw, 48px);
+            }
+
+            .large {
+                font-size: clamp(28px, 7vw, 48px);
+            }
+
+            .medium {
+                font-size: clamp(20px, 5vw, 36px);
+            }
+
+            /* Force single column on all grids */
+            .stats-grid,
+            .problem-grid,
+            .features-grid,
+            .content-grid,
+            .directory-grid,
+            .team-grid,
+            .collaborator-grid {
+                grid-template-columns: 1fr;
+            }
+
+            /* Tighter card padding */
+            .stat-card {
+                padding: clamp(20px, 5vw, 32px);
+            }
+
             .stat-value {
                 font-size: clamp(28px, 8vw, 56px);
             }
 
-            .stat-card {
-                padding: clamp(20px, 5vw, 32px);
+            .feature-card {
+                padding: clamp(24px, 5vw, 40px);
             }
 
             .feature-title {
@@ -640,8 +974,36 @@
                 line-height: 1.15;
             }
 
-            .feature-card {
-                padding: clamp(28px, 6vw, 48px);
+            .team-card,
+            .collaborator-card,
+            .content-card,
+            .problem-card {
+                padding: clamp(20px, 4vw, 32px);
+            }
+
+            /* Horizontal scrolling filters */
+            .filters {
+                flex-wrap: nowrap;
+                overflow-x: auto;
+                -webkit-overflow-scrolling: touch;
+                padding-bottom: 8px;
+            }
+
+            .filter-btn {
+                flex-shrink: 0;
+            }
+
+            /* Tighter section spacing */
+            .hero {
+                padding: clamp(48px, 10vw, 80px) 0;
+            }
+
+            .mb-large {
+                margin-bottom: clamp(32px, 6vw, 64px);
+            }
+
+            .mt-large {
+                margin-top: clamp(32px, 6vw, 64px);
             }
         }
 
@@ -683,7 +1045,7 @@
         /* ===== ABOUT PAGE ===== */
         .about-text-block {
             max-width: 900px;
-            margin: 0 auto clamp(64px, 10vw, 120px);
+            margin: 0 0 clamp(64px, 10vw, 120px);
         }
 
         .about-label {
@@ -712,27 +1074,47 @@
 
         .collaborator-grid {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(min(200px, 100%), 1fr));
-            gap: clamp(16px, 3vw, 24px);
+            grid-template-columns: repeat(auto-fit, minmax(min(280px, 100%), 1fr));
+            gap: clamp(20px, 3vw, 28px);
             margin-top: clamp(32px, 5vw, 48px);
         }
 
-        .collaborator-name {
-            font-size: clamp(16px, 2vw, 22px);
-            font-weight: 700;
-            padding: clamp(16px, 3vw, 24px);
+        .collaborator-card {
             background: white;
-            border-radius: 100px;
-            text-align: center;
+            border-radius: 20px;
+            padding: clamp(28px, 4vw, 40px);
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+            gap: clamp(16px, 2vw, 20px);
+            transition: transform 0.3s ease;
+        }
+
+        .collaborator-card:hover {
+            transform: translateY(-4px);
+        }
+
+        .collaborator-logo {
+            height: 40px;
+            max-width: 180px;
+            object-fit: contain;
+            object-position: left;
+        }
+
+        .collaborator-name {
+            font-size: clamp(17px, 2.2vw, 22px);
+            font-weight: 800;
+            line-height: 1.2;
+            letter-spacing: -0.01em;
         }
 
         .contact-box {
             padding: clamp(48px, 8vw, 80px);
             background: white;
             border-radius: 20px;
-            text-align: center;
+            text-align: left;
             max-width: 800px;
-            margin: clamp(64px, 10vw, 120px) auto 0;
+            margin: clamp(64px, 10vw, 120px) 0 0;
         }
 
         .contact-email {
@@ -748,10 +1130,52 @@
             color: var(--accent);
         }
 
+        /* ===== TEAM PROFILES ===== */
+        .team-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(min(220px, 100%), 1fr));
+            gap: clamp(24px, 4vw, 32px);
+            margin-top: clamp(32px, 5vw, 48px);
+        }
+
+        .team-card {
+            background: white;
+            border-radius: 20px;
+            padding: clamp(24px, 4vw, 32px);
+            transition: transform 0.3s ease;
+        }
+
+        .team-card:hover {
+            transform: translateY(-4px);
+        }
+
+        .team-photo {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            object-fit: cover;
+            background: var(--border);
+            margin-bottom: clamp(16px, 2vw, 24px);
+        }
+
+        .team-name {
+            font-size: clamp(18px, 2.2vw, 22px);
+            font-weight: 800;
+            line-height: 1.2;
+            letter-spacing: -0.01em;
+            margin-bottom: clamp(8px, 1.5vw, 12px);
+        }
+
+        .team-description {
+            font-size: clamp(14px, 1.6vw, 16px);
+            line-height: 1.6;
+            opacity: 0.8;
+        }
+
         /* ===== UTILITY ===== */
         .mt-large { margin-top: clamp(48px, 8vw, 96px); }
         .mb-large { margin-bottom: clamp(48px, 8vw, 96px); }
-        .text-center { text-align: center; }
+        .text-center { text-align: left; }
     </style>
 </head>
 <body>
@@ -766,7 +1190,7 @@
                 <div class="logo-icon">
                     <svg viewBox="0 0 120 120" fill="none" xmlns="http://www.w3.org/2000/svg">
                         <!-- Center node -->
-                        <circle cx="60" cy="60" r="8" fill="#6B7F5B"/>
+                        <circle cx="60" cy="60" r="8" fill="#C2632A"/>
                         <!-- Outer nodes -->
                         <circle cx="60" cy="20" r="6" fill="#0A0A0A"/>
                         <circle cx="95" cy="40" r="6" fill="#0A0A0A"/>
@@ -783,14 +1207,19 @@
                         <line x1="60" y1="60" x2="25" y2="40" stroke="#0A0A0A" stroke-width="2"/>
                     </svg>
                 </div>
-                <span>DAF COMMONS</span>
+                <span data-content="nav_logo">DAF COMMONS</span>
             </div>
+            <button class="nav-toggle" onclick="toggleNav()" aria-label="Toggle navigation">
+                <span></span>
+                <span></span>
+                <span></span>
+            </button>
             <ul>
-                <li><a href="#" onclick="navigateTo('home')" class="nav-link" data-page="home">Home</a></li>
-                <li><a href="#" onclick="navigateTo('community')" class="nav-link" data-page="community">Community</a></li>
-                <li><a href="#" onclick="navigateTo('education')" class="nav-link" data-page="education">Education</a></li>
-                <li><a href="#" onclick="navigateTo('directory')" class="nav-link" data-page="directory">Directory</a></li>
-                <li><a href="#" onclick="navigateTo('about')" class="nav-link" data-page="about">About</a></li>
+                <li><a href="#" onclick="navigateTo('home')" class="nav-link" data-page="home" data-content="nav_home">Home</a></li>
+                <li><a href="#" onclick="navigateTo('community')" class="nav-link" data-page="community" data-content="nav_community">Community</a></li>
+                <li><a href="#" onclick="navigateTo('education')" class="nav-link" data-page="education" data-content="nav_education">Education</a></li>
+                <li><a href="#" onclick="navigateTo('directory')" class="nav-link" data-page="directory" data-content="nav_directory">Directory</a></li>
+                <li><a href="#" onclick="navigateTo('about')" class="nav-link" data-page="about" data-content="nav_about">About</a></li>
             </ul>
         </div>
     </nav>
@@ -803,11 +1232,92 @@
                 <div class="container">
                     <div class="hero-content scroll-animate">
                         <h1 class="massive">
-                            DAF<br>
-                            COMMONS<span class="asterisk">*</span>
+                            <span data-content="home_hero_heading">DAF COMMONS</span><span class="asterisk">*</span>
                         </h1>
-                        <p class="body-large hero-subtitle">
+                        <p class="body-large hero-subtitle" data-content="home_hero_subtitle">
                             Building collective infrastructure to unlock $50B+ in impact investments from the donor-advised fund ecosystem
+                        </p>
+                    </div>
+                </div>
+            </section>
+
+            <!-- How You Can Help -->
+            <section class="section-small">
+                <div class="container">
+                    <h2 class="large mb-large scroll-animate" data-content="home_cta_heading">
+                        How you can help…
+                    </h2>
+
+                    <div class="cta-grid">
+                        <!-- CTA 1: Email Signup -->
+                        <div class="cta-card scroll-animate">
+                            <h3 class="medium" data-content="home_cta_email_heading">
+                                Join the mailing list
+                            </h3>
+
+                            <p class="body form-description" data-content="home_cta_email_description">
+                                No spam. Just occasional updates on what we're learning, what we're reading, and what this community is becoming.
+                            </p>
+
+                            <form id="emailSignupForm" class="form-container" onsubmit="handleEmailSignup(event)">
+                                <input type="text" name="name" placeholder="Your name" required>
+                                <input type="email" name="email" placeholder="Your email" required>
+                                <button type="submit" class="btn-primary">Join Us</button>
+                                <div id="emailSignupMessage" class="message"></div>
+                            </form>
+                        </div>
+
+                        <!-- CTA 2: Survey -->
+                        <div class="cta-card scroll-animate">
+                            <h3 class="medium" data-content="home_cta_survey_heading">
+                                If you have a DAF, take our survey
+                            </h3>
+
+                            <p class="body form-intro" data-content="home_cta_survey_intro">
+                                We want to know:
+                            </p>
+
+                            <ul class="clean-list">
+                                <li data-content="home_cta_survey_item_1">How you're using it</li>
+                                <li data-content="home_cta_survey_item_2">What's confusing</li>
+                                <li data-content="home_cta_survey_item_3">What's possible</li>
+                                <li data-content="home_cta_survey_item_4">Whether you even want a community like this (totally fair if you don't)</li>
+                            </ul>
+
+                            <a href="https://forms.gle/JgSMCAXpyBrmsxG1A" target="_blank" class="button btn-secondary">
+                                Take the Survey
+                            </a>
+                        </div>
+
+                        <!-- CTA 3: Learn More - FULL WIDTH -->
+                        <div class="cta-card full-width cta-learn scroll-animate">
+                            <div class="cta-learn-text">
+                                <h3 class="medium" style="margin-bottom: clamp(16px, 3vw, 24px);" data-content="home_cta_learn_heading">
+                                    Not sure what this is about?
+                                </h3>
+
+                                <p class="body" style="opacity: 0.8; margin: 0;" data-content="home_cta_learn_description">
+                                    Scroll down to see the problem we're trying to solve — or explore our resources and directory to learn what's possible.
+                                </p>
+                            </div>
+
+                            <button onclick="scrollToProblem()" class="button btn-outline cta-learn-btn">
+                                Learn More ↓
+                            </button>
+                        </div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Problem Intro -->
+            <section class="section-small">
+                <div class="container">
+                    <div class="scroll-animate" style="max-width: 1000px;">
+                        <h2 class="large accent" style="margin-bottom: clamp(32px, 5vw, 48px);" data-content="home_problem_intro_heading">
+                            The Problem:
+                        </h2>
+                        <p class="body-large" data-content="home_problem_intro_text">
+                            DAF holders, like us & maybe you, steward $326 billion in the U.S.. And with 25% of philanthropic capital flowing to DAFs from the Great Wealth Transfer, that is likely to grow exponentially over the next decade to perhaps $4.5 trillion. Yet the majority of DAF holders capital is invested conventionally, not maliciously, but without impact alignment.
                         </p>
                     </div>
                 </div>
@@ -818,20 +1328,20 @@
                 <div class="container">
                     <div class="stats-grid">
                         <div class="stat-card scroll-animate">
-                            <div class="stat-value">$326B</div>
-                            <div class="stat-label">Current DAF Assets</div>
+                            <div class="stat-value" data-content="home_stats_1_value">$326B</div>
+                            <div class="stat-label" data-content="home_stats_1_label">Current DAF Assets</div>
                         </div>
                         <div class="stat-card scroll-animate">
-                            <div class="stat-value">$95K</div>
-                            <div class="stat-label">Average Account</div>
+                            <div class="stat-value" data-content="home_stats_2_value">$95K</div>
+                            <div class="stat-label" data-content="home_stats_2_label">Average Account</div>
                         </div>
                         <div class="stat-card scroll-animate">
-                            <div class="stat-value">27%</div>
-                            <div class="stat-label">Annual Growth</div>
+                            <div class="stat-value" data-content="home_stats_3_value">27%</div>
+                            <div class="stat-label" data-content="home_stats_3_label">Annual Growth</div>
                         </div>
                         <div class="stat-card scroll-animate">
-                            <div class="stat-value accent">$50B+</div>
-                            <div class="stat-label">Target Impact</div>
+                            <div class="stat-value accent" data-content="home_stats_4_value">$50B+</div>
+                            <div class="stat-label" data-content="home_stats_4_label">Target Impact</div>
                         </div>
                     </div>
                 </div>
@@ -840,29 +1350,29 @@
             <!-- The Problem -->
             <section class="section">
                 <div class="container">
-                    <h2 class="large mb-large scroll-animate">The Problem</h2>
+                    <h2 class="large mb-large scroll-animate" data-content="home_problem_heading">The Problem</h2>
                     <div class="problem-grid">
                         <div class="problem-card scroll-animate">
-                            <h3 class="problem-title">Fragmented</h3>
-                            <p class="problem-description">
+                            <h3 class="problem-title" data-content="home_problem_1_title">Fragmented</h3>
+                            <p class="problem-description" data-content="home_problem_1_description">
                                 DAF holders, advisors, sponsors operate in silos with limited visibility into each other's work
                             </p>
                         </div>
                         <div class="problem-card scroll-animate">
-                            <h3 class="problem-title">Knowledge Barriers</h3>
-                            <p class="problem-description">
+                            <h3 class="problem-title" data-content="home_problem_2_title">Knowledge Barriers</h3>
+                            <p class="problem-description" data-content="home_problem_2_description">
                                 Expertise remains trapped in proprietary systems and closed networks
                             </p>
                         </div>
                         <div class="problem-card scroll-animate">
-                            <h3 class="problem-title">Discovery Friction</h3>
-                            <p class="problem-description">
+                            <h3 class="problem-title" data-content="home_problem_3_title">Discovery Friction</h3>
+                            <p class="problem-description" data-content="home_problem_3_description">
                                 No central directory for finding advisors, sponsors, and investment opportunities
                             </p>
                         </div>
                         <div class="problem-card scroll-animate">
-                            <h3 class="problem-title">Coordination Failures</h3>
-                            <p class="problem-description">
+                            <h3 class="problem-title" data-content="home_problem_4_title">Coordination Failures</h3>
+                            <p class="problem-description" data-content="home_problem_4_description">
                                 Without shared infrastructure, opportunities for collective action go unrealized
                             </p>
                         </div>
@@ -873,26 +1383,26 @@
             <!-- Three Pillars -->
             <section class="section">
                 <div class="container">
-                    <h2 class="large accent mb-large scroll-animate">Three Pillars</h2>
+                    <h2 class="large accent mb-large scroll-animate" data-content="home_features_heading">Three Pillars</h2>
                     <div class="features-grid">
                         <div class="feature-card scroll-animate" onclick="navigateTo('community')">
                             <div class="feature-number">01<span class="asterisk">*</span></div>
-                            <h3 class="feature-title">Network &<br>Community</h3>
-                            <p class="feature-description">
+                            <h3 class="feature-title" data-content="home_features_1_title">Network & Community</h3>
+                            <p class="feature-description" data-content="home_features_1_description">
                                 Digital forums, WhatsApp coordination, peer mentorship, and events connecting DAF holders and advisors
                             </p>
                         </div>
                         <div class="feature-card scroll-animate" onclick="navigateTo('education')">
                             <div class="feature-number">02<span class="asterisk">*</span></div>
-                            <h3 class="feature-title">Education<br>Hub</h3>
-                            <p class="feature-description">
+                            <h3 class="feature-title" data-content="home_features_2_title">Education Hub</h3>
+                            <p class="feature-description" data-content="home_features_2_description">
                                 Library of collective intelligence with guides, templates, case studies, and research on impact investing through DAFs
                             </p>
                         </div>
                         <div class="feature-card scroll-animate" onclick="navigateTo('directory')">
                             <div class="feature-number">03<span class="asterisk">*</span></div>
-                            <h3 class="feature-title">Stakeholder<br>Directory</h3>
-                            <p class="feature-description">
+                            <h3 class="feature-title" data-content="home_features_3_title">Stakeholder Directory</h3>
+                            <p class="feature-description" data-content="home_features_3_description">
                                 Yellow pages for the DAF ecosystem—searchable directory of sponsors, advisors, intermediaries, and investment vehicles
                             </p>
                         </div>
@@ -903,125 +1413,16 @@
 
         <!-- ===== COMMUNITY PAGE ===== -->
         <div id="community" class="page">
-            <!-- Hero -->
             <section class="hero">
                 <div class="container">
-                    <div class="hero-content">
-                        <h1 class="huge accent">Network &<br>Community</h1>
-                        <p class="body-large hero-subtitle">
-                            Learning community centered on real-world examples. Building collective identity through peer support and shared challenges.
+                    <div class="hero-content scroll-animate">
+                        <h1 class="huge accent" data-content="community_hero_heading">Network & Community</h1>
+                        <p class="body-large hero-subtitle" data-content="community_hero_subtitle">
+                            Coming soon.
                         </p>
-                    </div>
-                </div>
-            </section>
-
-            <!-- Content Sections -->
-            <section class="section">
-                <div class="container">
-                    <!-- WhatsApp Groups -->
-                    <div class="content-block">
-                        <h2 class="medium mb-large scroll-animate">WhatsApp Groups</h2>
-                        <div class="content-grid">
-                            <div class="content-card scroll-animate">
-                                <h3 class="card-title">Topic Channels</h3>
-                                <p class="card-description">
-                                    Join topic-specific groups for climate, healthcare, community development, and more. Real-time collaboration with peers.
-                                </p>
-                            </div>
-                            <div class="content-card scroll-animate">
-                                <h3 class="card-title">Regional Cohorts</h3>
-                                <p class="card-description">
-                                    Connect with DAF holders and advisors in your region for localized collaboration and relationship-building.
-                                </p>
-                            </div>
-                            <div class="content-card scroll-animate">
-                                <h3 class="card-title">Moderated Channels</h3>
-                                <p class="card-description">
-                                    Curated conversations maintain signal-to-noise ratio and create pathways to deeper platform engagement.
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="line"></div>
-
-                    <!-- Discussion Forum -->
-                    <div class="content-block">
-                        <h2 class="medium mb-large scroll-animate">Discussion Forum</h2>
-                        <div class="content-grid">
-                            <div class="content-card scroll-animate">
-                                <h3 class="card-title">Reddit Community</h3>
-                                <p class="card-description">
-                                    Join our hosted Reddit community for longer-form discussions, Q&A, and knowledge sharing across the DAF ecosystem.
-                                </p>
-                            </div>
-                            <div class="content-card scroll-animate">
-                                <h3 class="card-title">Expert AMAs</h3>
-                                <p class="card-description">
-                                    Regular Ask Me Anything sessions with impact investing experts, DAF sponsors, and successful practitioners.
-                                </p>
-                            </div>
-                            <div class="content-card scroll-animate">
-                                <h3 class="card-title">Threaded Discussions</h3>
-                                <p class="card-description">
-                                    Organized conversations with tagging, search, and reputation systems to surface valuable contributions.
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="line"></div>
-
-                    <!-- Mentorship -->
-                    <div class="content-block">
-                        <h2 class="medium mb-large scroll-animate">Mentorship Program</h2>
-                        <div class="content-grid">
-                            <div class="content-card scroll-animate">
-                                <h3 class="card-title">Structured Pairing</h3>
-                                <p class="card-description">
-                                    Match with experienced DAF practitioners based on your interests, goals, and investment focus areas.
-                                </p>
-                            </div>
-                            <div class="content-card scroll-animate">
-                                <h3 class="card-title">Guided Frameworks</h3>
-                                <p class="card-description">
-                                    Access proven frameworks for mentor-mentee relationships, with quarterly check-ins and outcome tracking.
-                                </p>
-                            </div>
-                            <div class="content-card scroll-animate">
-                                <h3 class="card-title">Peer Cohorts</h3>
-                                <p class="card-description">
-                                    Graduate to peer cohort models where experienced members learn and collaborate together.
-                                </p>
-                            </div>
-                        </div>
-                    </div>
-
-                    <div class="line"></div>
-
-                    <!-- Events -->
-                    <div class="content-block">
-                        <h2 class="medium mb-large scroll-animate">Events</h2>
-                        <div class="content-grid">
-                            <div class="content-card scroll-animate">
-                                <h3 class="card-title">National Summit</h3>
-                                <p class="card-description">
-                                    Annual gathering bringing together 100+ DAF holders and advisors for deep connection and strategic coordination.
-                                </p>
-                            </div>
-                            <div class="content-card scroll-animate">
-                                <h3 class="card-title">Submit an Event</h3>
-                                <p class="card-description">
-                                    Community members can propose and list regional events, workshops, and learning opportunities for the network.
-                                </p>
-                            </div>
-                            <div class="content-card scroll-animate">
-                                <h3 class="card-title">Virtual Workshops</h3>
-                                <p class="card-description">
-                                    Deep-dive sessions on impact strategies, due diligence, and portfolio construction with expert practitioners.
-                                </p>
-                            </div>
-                        </div>
+                        <p class="body-large hero-subtitle" style="opacity: 0.7;" data-content="community_hero_description">
+                            We're building a space for DAF holders and advisors to connect, learn, and collaborate. Sign up on the home page to be the first to know when it launches.
+                        </p>
                     </div>
                 </div>
             </section>
@@ -1033,8 +1434,8 @@
             <section class="hero">
                 <div class="container">
                     <div class="hero-content">
-                        <h1 class="huge accent">Education<br>Hub</h1>
-                        <p class="body-large hero-subtitle">
+                        <h1 class="huge accent" data-content="education_hero_heading">Education Hub</h1>
+                        <p class="body-large hero-subtitle" data-content="education_hero_subtitle">
                             A giant library of collective intelligence. Articles, talks, and papers on the DAF landscape written by practitioners.
                         </p>
                     </div>
@@ -1050,6 +1451,7 @@
                             type="text"
                             class="search-input"
                             id="educationSearchInput"
+                            data-placeholder="education_search_placeholder"
                             placeholder="Search resources by keyword..."
                             oninput="searchEducation()"
                         >
@@ -1057,11 +1459,11 @@
 
                     <!-- Filters -->
                     <div class="filters">
-                        <button class="filter-btn active" onclick="filterResources('all')">All Resources</button>
-                        <button class="filter-btn" onclick="filterResources('guide')">Guides</button>
-                        <button class="filter-btn" onclick="filterResources('template')">Templates</button>
-                        <button class="filter-btn" onclick="filterResources('tool')">Tools</button>
-                        <button class="filter-btn" onclick="filterResources('case-study')">Case Studies</button>
+                        <button class="filter-btn active" onclick="filterResources('all')" data-content="education_filter_all">All Resources</button>
+                        <button class="filter-btn" onclick="filterResources('guide')" data-content="education_filter_guide">Guides</button>
+                        <button class="filter-btn" onclick="filterResources('template')" data-content="education_filter_template">Templates</button>
+                        <button class="filter-btn" onclick="filterResources('tool')" data-content="education_filter_tool">Tools</button>
+                        <button class="filter-btn" onclick="filterResources('case-study')" data-content="education_filter_casestudy">Case Studies</button>
                     </div>
 
                     <!-- Resources List -->
@@ -1069,8 +1471,8 @@
 
                     <!-- No Results -->
                     <div class="no-results" id="educationNoResults" style="display: none;">
-                        <div class="no-results-title">No Results</div>
-                        <div class="no-results-text">Try adjusting your search or filters</div>
+                        <div class="no-results-title" data-content="education_no_results_heading">No Results</div>
+                        <div class="no-results-text" data-content="education_no_results_text">Try adjusting your search or filters</div>
                     </div>
                 </div>
             </section>
@@ -1082,8 +1484,8 @@
             <section class="hero">
                 <div class="container">
                     <div class="hero-content">
-                        <h1 class="huge accent">Stakeholder<br>Directory</h1>
-                        <p class="body-large hero-subtitle">
+                        <h1 class="huge accent" data-content="directory_hero_heading">Stakeholder Directory</h1>
+                        <p class="body-large hero-subtitle" data-content="directory_hero_subtitle">
                             The yellow pages for Donor Advised Funds. Your guide to the ecosystem of organizations supporting impact capital deployment.
                         </p>
                     </div>
@@ -1099,6 +1501,7 @@
                             type="text"
                             class="search-input"
                             id="searchInput"
+                            data-placeholder="directory_search_placeholder"
                             placeholder="Search organizations..."
                             oninput="searchDirectory()"
                         >
@@ -1106,12 +1509,12 @@
 
                     <!-- Filters -->
                     <div class="filters">
-                        <button class="filter-btn active" onclick="filterDirectory('all')">All Organizations</button>
-                        <button class="filter-btn" onclick="filterDirectory('DAF Sponsor')">Sponsors</button>
-                        <button class="filter-btn" onclick="filterDirectory('Impact Investment Advisor')">Advisors</button>
-                        <button class="filter-btn" onclick="filterDirectory('Investment Intermediary')">Intermediaries</button>
-                        <button class="filter-btn" onclick="filterDirectory('Investment Vehicle')">Funds</button>
-                        <button class="filter-btn" onclick="filterDirectory('Technology Platform')">Technology</button>
+                        <button class="filter-btn active" onclick="filterDirectory('all')" data-content="directory_filter_all">All Organizations</button>
+                        <button class="filter-btn" onclick="filterDirectory('DAF Sponsor')" data-content="directory_filter_sponsor">Sponsors</button>
+                        <button class="filter-btn" onclick="filterDirectory('Impact Investment Advisor')" data-content="directory_filter_advisor">Advisors</button>
+                        <button class="filter-btn" onclick="filterDirectory('Investment Intermediary')" data-content="directory_filter_intermediary">Intermediaries</button>
+                        <button class="filter-btn" onclick="filterDirectory('Investment Vehicle')" data-content="directory_filter_fund">Funds</button>
+                        <button class="filter-btn" onclick="filterDirectory('Technology Platform')" data-content="directory_filter_technology">Technology</button>
                     </div>
 
                     <!-- Results Count -->
@@ -1122,8 +1525,8 @@
 
                     <!-- No Results -->
                     <div class="no-results" id="noResults" style="display: none;">
-                        <div class="no-results-title">No Results</div>
-                        <div class="no-results-text">Try adjusting your search or filters</div>
+                        <div class="no-results-title" data-content="directory_no_results_heading">No Results</div>
+                        <div class="no-results-text" data-content="directory_no_results_text">Try adjusting your search or filters</div>
                     </div>
                 </div>
             </section>
@@ -1135,7 +1538,7 @@
             <section class="hero">
                 <div class="container">
                     <div class="hero-content">
-                        <h1 class="huge">About<br>DAF Commons</h1>
+                        <h1 class="huge" data-content="about_hero_heading">About DAF Commons</h1>
                     </div>
                 </div>
             </section>
@@ -1145,17 +1548,46 @@
                 <div class="container">
                     <!-- Who We Are -->
                     <div class="about-text-block scroll-animate">
-                        <div class="about-label">Who We Are</div>
-                        <p class="about-body">
+                        <div class="about-label" data-content="about_who_label">Who We Are</div>
+                        <p class="about-body" data-content="about_who_body">
                             We are a collective of individuals and practitioners frustrated by today's use of DAFs, and inspired by what's possible.
                         </p>
+
+                        <!-- Team Profiles -->
+                        <div class="team-grid">
+                            <div class="team-card scroll-animate">
+                                <img class="team-photo" data-src="about_team_1_photo" src="" alt="">
+                                <div class="team-name" data-content="about_team_1_name">Team Member 1</div>
+                                <p class="team-description" data-content="about_team_1_description">Description coming soon.</p>
+                            </div>
+                            <div class="team-card scroll-animate">
+                                <img class="team-photo" data-src="about_team_2_photo" src="" alt="">
+                                <div class="team-name" data-content="about_team_2_name">Team Member 2</div>
+                                <p class="team-description" data-content="about_team_2_description">Description coming soon.</p>
+                            </div>
+                            <div class="team-card scroll-animate">
+                                <img class="team-photo" data-src="about_team_3_photo" src="" alt="">
+                                <div class="team-name" data-content="about_team_3_name">Team Member 3</div>
+                                <p class="team-description" data-content="about_team_3_description">Description coming soon.</p>
+                            </div>
+                            <div class="team-card scroll-animate">
+                                <img class="team-photo" data-src="about_team_4_photo" src="" alt="">
+                                <div class="team-name" data-content="about_team_4_name">Team Member 4</div>
+                                <p class="team-description" data-content="about_team_4_description">Description coming soon.</p>
+                            </div>
+                            <div class="team-card scroll-animate">
+                                <img class="team-photo" data-src="about_team_5_photo" src="" alt="">
+                                <div class="team-name" data-content="about_team_5_name">Team Member 5</div>
+                                <p class="team-description" data-content="about_team_5_description">Description coming soon.</p>
+                            </div>
+                        </div>
                     </div>
 
                     <!-- What We Do -->
                     <div class="rock-overlay" style="padding-top: 0;">
                         <div class="about-text-block scroll-animate">
-                            <div class="about-label">What We Do</div>
-                            <p class="about-body">
+                            <div class="about-label" data-content="about_what_label">What We Do</div>
+                            <p class="about-body" data-content="about_what_body">
                                 The DAF Commons project was born out of this frustration, and desire to build a collective space for DAF holders seeking to make material impact with their capital. DAF Commons serves as the connective tissue between DAF holders and DAF possibilities.
                             </p>
                         </div>
@@ -1163,25 +1595,37 @@
 
                     <!-- Collaborators -->
                     <div class="about-text-block scroll-animate">
-                        <div class="about-label">Our Collaborators</div>
-                        <p class="about-body" style="margin-bottom: clamp(24px, 4vw, 32px);">
+                        <div class="about-label" data-content="about_collab_label">Our Collaborators</div>
+                        <p class="about-body" style="margin-bottom: clamp(24px, 4vw, 32px);" data-content="about_collab_intro">
                             This project's work is made possible with the support of:
                         </p>
                         <div class="collaborator-grid">
-                            <div class="collaborator-name">CataCap</div>
-                            <div class="collaborator-name">Innovative Finance Initiative</div>
-                            <div class="collaborator-name">Sea Forward Fund</div>
-                            <div class="collaborator-name">Collective Climate Justice Fund</div>
+                            <div class="collaborator-card scroll-animate">
+                                <img class="collaborator-logo" data-src="about_collab_1_logo" src="" alt="CataCap">
+                                <div class="collaborator-name" data-content="about_collab_1">CataCap</div>
+                            </div>
+                            <div class="collaborator-card scroll-animate">
+                                <img class="collaborator-logo" data-src="about_collab_2_logo" src="" alt="Innovative Finance Initiative">
+                                <div class="collaborator-name" data-content="about_collab_2">Innovative Finance Initiative</div>
+                            </div>
+                            <div class="collaborator-card scroll-animate">
+                                <img class="collaborator-logo" data-src="about_collab_3_logo" src="" alt="Sea Forward Fund">
+                                <div class="collaborator-name" data-content="about_collab_3">Sea Forward Fund</div>
+                            </div>
+                            <div class="collaborator-card scroll-animate">
+                                <img class="collaborator-logo" data-src="about_collab_4_logo" src="" alt="Collective Climate Justice Fund">
+                                <div class="collaborator-name" data-content="about_collab_4">Collective Climate Justice Fund</div>
+                            </div>
                         </div>
                     </div>
 
                     <!-- Contact -->
                     <div class="contact-box scroll-animate">
-                        <div class="about-label" style="margin-bottom: clamp(24px, 4vw, 32px);">Contact</div>
-                        <p class="body" style="margin-bottom: clamp(24px, 4vw, 32px); opacity: 0.7;">
+                        <div class="about-label" style="margin-bottom: clamp(24px, 4vw, 32px);" data-content="about_contact_label">Contact</div>
+                        <p class="body" style="margin-bottom: clamp(24px, 4vw, 32px); opacity: 0.7;" data-content="about_contact_intro">
                             Reach out to us at
                         </p>
-                        <a href="mailto:connect@DAFCommons.earth" class="contact-email">
+                        <a href="mailto:connect@DAFCommons.earth" class="contact-email" data-content="about_contact_email">
                             connect@DAFCommons.earth
                         </a>
                     </div>
@@ -1194,12 +1638,145 @@
     <script>
         /*
         ===================================
+        SUPABASE CONFIGURATION
+        ===================================
+        */
+        // TODO: Replace with your actual Supabase credentials from https://app.supabase.com
+        const SUPABASE_URL = 'https://gkwbloqfhkpdtctsqqwk.supabase.co';
+        const SUPABASE_ANON_KEY = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6Imdrd2Jsb3FmaGtwZHRjdHNxcXdrIiwicm9sZSI6ImFub24iLCJpYXQiOjE3NzA1ODQ0NzEsImV4cCI6MjA4NjE2MDQ3MX0.K3sybXVSDvQ8pYcbcR7f9Bej5OlVtTnNBD0wpJ3Hwc8';
+
+        // Initialize Supabase client
+        const supabaseClient = window.supabase.createClient(SUPABASE_URL, SUPABASE_ANON_KEY);
+
+        /*
+        ===================================
+        DATA FETCHING FROM SUPABASE
+        ===================================
+        */
+
+        async function fetchOrganizations() {
+            try {
+                const { data, error } = await supabaseClient
+                    .from('organizations')
+                    .select('*')
+                    .order('display_order', { ascending: true });
+
+                if (error) throw error;
+                console.log(`✓ Loaded ${data.length} organizations from Supabase`);
+                return data;
+            } catch (error) {
+                console.error('Error fetching organizations:', error);
+                return ORGANIZATIONS_FALLBACK; // Use fallback data
+            }
+        }
+
+        async function fetchEducationResources() {
+            try {
+                const { data, error } = await supabaseClient
+                    .from('education_resources')
+                    .select('*')
+                    .order('display_order', { ascending: true});
+
+                if (error) throw error;
+                console.log(`✓ Loaded ${data.length} education resources from Supabase`);
+                return data;
+            } catch (error) {
+                console.error('Error fetching education resources:', error);
+                return RESOURCES_FALLBACK; // Use fallback data
+            }
+        }
+
+        async function fetchSiteContent() {
+            try {
+                const { data, error } = await supabaseClient
+                    .from('site_content')
+                    .select('*')
+                    .order('display_order', { ascending: true });
+
+                if (error) throw error;
+                console.log(`✓ Loaded ${data.length} content items from Supabase`);
+                return data;
+            } catch (error) {
+                console.error('Error fetching site content:', error);
+                return [];
+            }
+        }
+
+        function loadPageContent(contentData) {
+            // Create a map for fast lookup
+            const contentMap = {};
+            contentData.forEach(item => {
+                contentMap[item.content_key] = item.content;
+            });
+
+            // Apply content to all elements with data-content attribute
+            document.querySelectorAll('[data-content]').forEach(element => {
+                const key = element.getAttribute('data-content');
+                if (contentMap[key]) {
+                    // For email links, update href as well
+                    if (element.tagName === 'A' && key.includes('email')) {
+                        element.href = `mailto:${contentMap[key]}`;
+                        element.textContent = contentMap[key];
+                    }
+                    // For title tag, update document title as well
+                    else if (element.tagName === 'TITLE') {
+                        element.textContent = contentMap[key];
+                        document.title = contentMap[key];
+                    }
+                    // For all other elements
+                    else {
+                        element.textContent = contentMap[key];
+                    }
+                }
+            });
+
+            // Apply image sources from CMS
+            document.querySelectorAll('[data-src]').forEach(element => {
+                const key = element.getAttribute('data-src');
+                if (contentMap[key]) {
+                    element.src = contentMap[key];
+                    // Set alt text from the corresponding name field if available
+                    const nameKey = key.replace('_photo', '_name');
+                    if (contentMap[nameKey]) {
+                        element.alt = contentMap[nameKey];
+                    }
+                }
+            });
+
+            // Apply placeholders separately
+            document.querySelectorAll('[data-placeholder]').forEach(element => {
+                const key = element.getAttribute('data-placeholder');
+                if (contentMap[key]) {
+                    element.placeholder = contentMap[key];
+                }
+            });
+
+            console.log('✓ Site content loaded');
+        }
+
+        async function submitForm(formData) {
+            try {
+                const { data, error } = await supabaseClient
+                    .from('user_submissions')
+                    .insert([formData]);
+
+                if (error) throw error;
+                console.log('✓ Form submitted successfully');
+                return { success: true };
+            } catch (error) {
+                console.error('Error submitting form:', error);
+                return { success: false, error: error.message };
+            }
+        }
+
+        /*
+        ===================================
         CMS_DATA: SITE CONTENT
         ===================================
         */
 
-        // CMS_DATA: Education Hub Resources
-        const RESOURCES = [
+        // CMS_DATA: Education Hub Resources (Fallback)
+        const RESOURCES_FALLBACK = [
             {
                 type: 'guide',
                 title: 'Getting Started with DAF Impact Investing',
@@ -1286,8 +1863,8 @@
             }
         ];
 
-        // CMS_DATA: Organizations from CSV
-        const ORGANIZATIONS = [
+        // CMS_DATA: Organizations from CSV (Fallback)
+        const ORGANIZATIONS_FALLBACK = [
             { name: "Movement Strategy Center", description: "Community organizing fiscal sponsor focused on activating donor capital through an ecosystem approach, backing change agents and capital innovators.", website: "https://movementstrategy.org/donor-advised-fund", type: "Capital Deployment" },
             { name: "Silicon Valley Community Foundation", description: "Community-foundation DAF sponsor with bespoke philanthropic services.", website: "https://www.svcf.org", type: "DAF Sponsor" },
             { name: "The Chicago Community Trust", description: "A place-based community foundation providing residents of Chicago with opportunities to address regional goals across housing, food and jobs.", website: "https://www.cct.org/", type: "DAF Sponsor" },
@@ -1336,6 +1913,10 @@
             { name: "Tertiary", description: "A loan guarantees platform to de-risk private investment in Sustainable Infrastructure Development projects.", website: "https://www.renaissancephilanthropy.org/tertiary-impact-capital", type: "Investment Vehicle" }
         ];
 
+        // Global variables for loaded data
+        let RESOURCES = [];
+        let ORGANIZATIONS = [];
+
         /*
         ===================================
         SCROLL ANIMATIONS
@@ -1376,7 +1957,21 @@
         */
         let currentPage = 'home';
 
+        function toggleNav() {
+            const toggle = document.querySelector('.nav-toggle');
+            const navList = document.querySelector('nav ul');
+            toggle.classList.toggle('open');
+            navList.classList.toggle('open');
+        }
+
         function navigateTo(page) {
+            // Close mobile nav if open
+            const toggle = document.querySelector('.nav-toggle');
+            const navList = document.querySelector('nav ul');
+            if (toggle && navList) {
+                toggle.classList.remove('open');
+                navList.classList.remove('open');
+            }
             // Hide all pages
             document.querySelectorAll('.page').forEach(p => {
                 p.classList.remove('active');
@@ -1408,6 +2003,77 @@
 
             // Re-initialize scroll animations for new page
             setTimeout(() => initScrollAnimations(), 100);
+        }
+
+        /*
+        ===================================
+        EMAIL SIGNUP
+        ===================================
+        */
+        async function handleEmailSignup(e) {
+            e.preventDefault();
+
+            const form = e.target;
+            const nameInput = form.querySelector('input[name="name"]');
+            const emailInput = form.querySelector('input[name="email"]');
+            const submitButton = form.querySelector('button[type="submit"]');
+            const messageDiv = document.getElementById('emailSignupMessage');
+
+            const name = nameInput.value.trim();
+            const email = emailInput.value.trim();
+
+            // Disable form during submission
+            submitButton.disabled = true;
+            submitButton.textContent = 'Joining...';
+
+            try {
+                const { data, error } = await supabaseClient
+                    .from('email_signups')
+                    .insert([
+                        {
+                            name: name,
+                            email: email,
+                            source: 'home_page',
+                            status: 'active'
+                        }
+                    ])
+                    .select();
+
+                if (error) {
+                    // Check if email already exists
+                    if (error.code === '23505') {
+                        messageDiv.className = 'message error';
+                        messageDiv.textContent = 'This email is already subscribed!';
+                    } else {
+                        throw error;
+                    }
+                } else {
+                    messageDiv.className = 'message success';
+                    messageDiv.textContent = 'Thanks for joining! We\'ll be in touch soon.';
+                    form.reset();
+                }
+
+                messageDiv.style.display = 'block';
+                setTimeout(() => messageDiv.style.display = 'none', 5000);
+
+            } catch (error) {
+                console.error('Error saving email:', error);
+                messageDiv.className = 'message error';
+                messageDiv.textContent = 'Something went wrong. Please try again.';
+                messageDiv.style.display = 'block';
+                setTimeout(() => messageDiv.style.display = 'none', 5000);
+            } finally {
+                submitButton.disabled = false;
+                submitButton.textContent = 'Join Us';
+            }
+        }
+
+        function scrollToProblem() {
+            // Find the problem section
+            const problemSection = document.querySelector('#home .section:nth-child(4)');
+            if (problemSection) {
+                problemSection.scrollIntoView({ behavior: 'smooth', block: 'start' });
+            }
         }
 
         /*
@@ -1537,7 +2203,21 @@
         }
 
         // Initialize
-        document.addEventListener('DOMContentLoaded', () => {
+        document.addEventListener('DOMContentLoaded', async () => {
+            // Load data from Supabase
+            const [orgs, resources, siteContent] = await Promise.all([
+                fetchOrganizations(),
+                fetchEducationResources(),
+                fetchSiteContent()
+            ]);
+
+            ORGANIZATIONS = orgs;
+            RESOURCES = resources;
+
+            // Load site content into DOM
+            loadPageContent(siteContent);
+
+            // Then initialize the app
             navigateTo('home');
             initScrollAnimations();
         });
